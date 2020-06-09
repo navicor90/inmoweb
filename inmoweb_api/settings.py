@@ -137,8 +137,8 @@ try:
     if 'DATABASES' not in locals():
         DATABASES = {}
 
-    if 'CLEAR_DB_DATABASE_URL' in os.environ:
-        url = urlparse(os.environ['CLEAR_DB_DATABASE_URL'])
+    if 'DATABASE_URL' in os.environ:
+        url = urlparse(os.environ['DATABASE_URL'])
 
         # Ensure default database exists.
         DATABASES['default'] = DATABASES.get('default', {})
@@ -171,3 +171,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# Compressed whitenoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
