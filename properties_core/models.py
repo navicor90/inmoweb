@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.backends.mysql.base import DatabaseWrapper
+DatabaseWrapper.data_types['DateTimeField'] = 'datetime' # fix for MySQL 5.5
 
 
 class Property(models.Model):
