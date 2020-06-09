@@ -27,7 +27,7 @@ SECRET_KEY = '^&=^8(p-(h+jjtvj+6ctg+$5i-3kt9u0e69e0ctb4c-8#a=dr9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['inmowebcore.herokuapp.com']
 
 
 # Application definition
