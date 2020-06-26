@@ -14,7 +14,7 @@ class Property(models.Model):
     currency = models.CharField(max_length=3)
     amount = models.FloatField()
     price = models.CharField(max_length=20)
-    url = models.CharField(max_length=100)
+    url = models.CharField(max_length=500)
     source_web = models.CharField(max_length=50)
     scrapped_date = models.DateField()
     description = models.TextField()
