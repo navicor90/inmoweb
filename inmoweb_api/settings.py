@@ -27,7 +27,7 @@ SECRET_KEY = '^&=^8(p-(h+jjtvj+6ctg+$5i-3kt9u0e69e0ctb4c-8#a=dr9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['inmowebcore.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','inmowebcore.herokuapp.com']
 
 
 # Application definition
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'properties_core',
     'rest_framework',
+    'properties_core',
 ]
 
 MIDDLEWARE = [
@@ -79,10 +79,10 @@ WSGI_APPLICATION = 'inmoweb_api.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
 }
 
 
@@ -118,13 +118,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'
-
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        #'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
@@ -139,24 +138,35 @@ try:
 
     if 'DATABASE_URL' in os.environ:
         url = urlparse(os.environ['DATABASE_URL'])
+    else:
+        # Development mode
+        url = urlparse("mysql://root@localhost/inmocore")
 
-        # Ensure default database exists.
-        DATABASES['default'] = DATABASES.get('default', {})
 
-        # Update with environment configuration.
-        DATABASES['default'].update({
-            'NAME': url.path[1:],
-            'USER': url.username,
-            'PASSWORD': url.password,
-            'HOST': url.hostname,
-            'PORT': url.port,
-        })
+    # Ensure default database exists.
+    DATABASES['default'] = DATABASES.get('default', {})
 
-        if url.scheme == 'mysql':
-            DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+    # Update with environment configuration.
+    DATABASES['default'].update({
+        'NAME': url.path[1:],
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port,
+        'OPTIONS': {
+            'sql_mode': 'traditional'
+        },
+    })
+
+    if url.scheme == 'mysql':
+        DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
 except Exception:
     print('Unexpected error:', sys.exc_info())
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+STATIC_URL = '/static/'
 
 # COLLECT STATIC HEROKU BUG
 
