@@ -36,7 +36,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-def batch_properties(request):
+def properties_batch(request):
     """
     List all code snippets, or create a new snippet.
     """
@@ -44,12 +44,22 @@ def batch_properties(request):
         if isinstance(request.data, list) and len(request.data) <= 20:
             properties = request.data
             serializers = []
+            all_duplicated = True
+            errors = []
             for p in properties:
                 s = PropertySerializer(data=p)
                 if s.is_valid():
                     serializers.append(s)
+                elif 'non_field_errors' in s.errors.keys():
+                    # Duplicated case
+                    all_duplicated &= all_duplicated
+                    errors.apend(s.errors)
                 else:
                     return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            if all_duplicated:
+                return Response(errors, status=status.HTTP_409_CONFLICT)
+
             resp_data = []
             for s in serializers:
                 s.save()

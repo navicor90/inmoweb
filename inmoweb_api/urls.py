@@ -26,5 +26,5 @@ router.register(r'properties', views.PropertyViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('batch_properties/', views.batch_properties)
+    path('properties_batch/', views.properties_batch)
 ]
