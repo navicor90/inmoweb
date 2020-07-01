@@ -41,7 +41,7 @@ def batch_properties(request):
     List all code snippets, or create a new snippet.
     """
     if request.method == 'POST':
-        if isinstance(request.data, list):
+        if isinstance(request.data, list) and len(request.data) <= 20:
             properties = request.data
             serializers = []
             for p in properties:
@@ -56,4 +56,4 @@ def batch_properties(request):
                 resp_data.append(s.data)
             return Response(resp_data, status=status.HTTP_201_CREATED)
         else:
-            return Response("This endpoint just receive list", status=status.HTTP_400_BAD_REQUEST)
+            return Response("This endpoint receive a list with 20 elements or less.", status=status.HTTP_400_BAD_REQUEST)
