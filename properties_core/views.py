@@ -34,6 +34,21 @@ class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
 
+    def create(self, request):
+        data = json.loads(request.body.decode("utf-8"))
+        update_property(data)
+        return super().create(request)
+
+
+def update_property(property_data):
+    ref_id = property_data['ref_id']
+    source_web = property_data['source_web']
+    try:
+        property = Property.objects.get(ref_id=ref_id, source_web=source_web)
+        property.save()
+    except Property.DoesNotExist:
+        pass
+
 
 @api_view(['POST'])
 def properties_batch(request):
@@ -47,6 +62,7 @@ def properties_batch(request):
             all_duplicated = True
             errors = []
             for p in properties:
+                update_property(p)
                 s = PropertySerializer(data=p)
                 if s.is_valid():
                     serializers.append(s)

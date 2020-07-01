@@ -17,7 +17,9 @@ class Property(models.Model):
     url = models.CharField(max_length=500)
     source_web = models.CharField(max_length=50)
     scrapped_date = models.DateField()
+    last_push = models.DateTimeField(auto_now=True)
     description = models.TextField()
     extra_json_info = models.TextField()
     property_type = models.CharField(max_length=2, choices=PROPERTY_TYPES)
     created_at = models.DateTimeField(auto_now_add=True)
+
