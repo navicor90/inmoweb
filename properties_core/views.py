@@ -53,7 +53,7 @@ def properties_batch(request):
                 elif 'non_field_errors' in s.errors.keys():
                     # Duplicated case
                     all_duplicated &= all_duplicated
-                    errors.apend(s.errors)
+                    errors.append(s.errors)
                 else:
                     return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
