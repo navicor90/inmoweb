@@ -3,7 +3,7 @@ from properties_core.models import Property
 from rest_framework import viewsets, status
 from properties_core.serializers import UserSerializer, GroupSerializer, PropertySerializer
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import json
 
@@ -34,11 +34,26 @@ class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
 
-    def create(self, request):
-        data = json.loads(request.body.decode("utf-8"))
-        if 'ref_id' in data.keys() and 'source_web' in data.keys():
-            props = Property.objects.filter(ref_id=data['ref_id']) \
-                                    .filter(source_web=data['source_web'])
-            if len(props) > 0:
-                return Response(data={"reason": "Object already exists"}, status=status.HTTP_409_CONFLICT)
-        return super().create(request)
+
+@api_view(['POST'])
+def batch_properties(request):
+    """
+    List all code snippets, or create a new snippet.
+    """
+    if request.method == 'POST':
+        if isinstance(request.data, list):
+            properties = request.data
+            serializers = []
+            for p in properties:
+                s = PropertySerializer(data=p)
+                if s.is_valid():
+                    serializers.append(s)
+                else:
+                    return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+            resp_data = []
+            for s in serializers:
+                s.save()
+                resp_data.append(s.data)
+            return Response(resp_data, status=status.HTTP_201_CREATED)
+        else:
+            return Response("This endpoint just receive list", status=status.HTTP_400_BAD_REQUEST)

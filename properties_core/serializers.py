@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from properties_core.models import Property
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,3 +31,9 @@ class PropertySerializer(serializers.ModelSerializer):
                   'description',
                   'extra_json_info',
                   'property_type']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Property.objects.all(),
+                fields=['ref_id', 'source_web']
+            )
+        ]
