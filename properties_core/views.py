@@ -50,6 +50,7 @@ def properties_batch(request):
                 s = PropertySerializer(data=p)
                 if s.is_valid():
                     serializers.append(s)
+                    all_duplicated = False
                 elif 'non_field_errors' in s.errors.keys():
                     # Duplicated case
                     all_duplicated &= all_duplicated
